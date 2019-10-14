@@ -36,7 +36,11 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 
-By default, the path to find the translations file is `your_project/assets/locale/xx.json`, xx being the name of the language (en, fr, ...). You can change the path with the `TranslationsSupport().translationFilePath` variable.
+By default, the package will load translation files in the `assets/locale` folder.
+<br>
+Example: `your_project/assets/locale/xx.json`, xx being the name of the language (en, fr, ...).
+<br>
+You can change the path with the `TranslationsSupport().translationFilePath` variable.
 
 ## The translations file
 
@@ -74,7 +78,3 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 ```
-
-## Final render
-
-![example](images/final_example.jpg)
