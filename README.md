@@ -28,7 +28,6 @@ class _MyAppState extends State<MyApp> {
       title: 'Translations Demo',
       localizationsDelegates: [
         const TranslationsDelegate(),
-        CustomMaterialLocalizationDelegate(),
       ],
       supportedLocales: TranslationsSupport().supportedLocales,
       home: MyHomePage(),

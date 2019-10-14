@@ -1,5 +1,3 @@
-library translation_package;
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -24,21 +22,34 @@ class TranslationsSupport {
   List<Locale> get supportedLocales =>
       supportedLanguages.map((language) => Locale(language, '')).toList();
 
+  /// Path where to find the translation files
   String translationFilePath = 'assets/locale/';
+
+  /// Default path of the translation files
+  String get defaultTranslationFilePath => 'assets/locale/';
 }
 
 /// Class handling the translations
 class Translations {
-  Locale locale;
+  /// Current locale
+  Locale _locale;
+
+  /// Contains localized values
   static Map<String, dynamic> _localizedValues;
 
+  /// Constructor
+  ///
+  /// [locale] Locale to initialize the translation with
   Translations(Locale locale) {
-    this.locale = locale;
+    this._locale = locale;
     _localizedValues = null;
   }
 
   /// Return the current language
-  get currentLanguage => locale.languageCode;
+  String get currentLanguage => _locale.languageCode;
+
+  /// Return the current locale
+  Locale get currentLocale => _locale;
 
   /// The data from the closest [Translations] instance that encloses the given
   /// context.
@@ -56,6 +67,7 @@ class Translations {
   /// Return the translated value for the accorded key
   ///
   /// [key] Key for the wanted translation
+  ///
   /// [args] Arguments of the translated value
   ///
   /// ```dart
@@ -63,6 +75,9 @@ class Translations {
   /// Widget build(BuildContext context) {
   ///   return Text(Translations.of(context).valueOf('hello', ['Bob']));
   /// }
+  /// ```
+  ///
+  /// If the translation associated to the key doesn't exist, or if the translations didn't load, the key is return.
   String valueOf(String key, {args}) {
     if (_localizedValues == null || _localizedValues[key] == null) {
       return key;
@@ -84,15 +99,24 @@ class Translations {
     // Get the path of the translations folder
     String path = TranslationsSupport().translationFilePath;
 
+    // If the path is null or empty, set it to the default one
+    if (path == null || path.isEmpty) {
+      path = TranslationsSupport().defaultTranslationFilePath;
+    }
+
     // If the path doesn't end with a '/', add it to the path
     if (!path.endsWith('/')) {
       path += '/';
     }
 
     // Load the file and parse it
-    String jsonContent =
-    await rootBundle.loadString("$path${locale.languageCode}.json");
-    _localizedValues = json.decode(jsonContent);
+    String fullPath = '$path${locale.languageCode}.json';
+    rootBundle.loadString(fullPath).then((String jsonContent) {
+      _localizedValues = json.decode(jsonContent);
+    }).catchError((error) {
+      print(error);
+    });
+
     return translations;
   }
 }
